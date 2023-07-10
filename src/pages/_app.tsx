@@ -5,9 +5,8 @@ import {ClerkProvider} from "@clerk/nextjs";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return <ClerkProvider>
-    <Component {...pageProps} />;
+    <Component {...pageProps} />
   </ClerkProvider>
-
 };
 
 export default api.withTRPC(MyApp);

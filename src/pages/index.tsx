@@ -1,12 +1,13 @@
 import Head from "next/head";
 import { api } from "~/utils/api";
 import {SignInButton, SignOutButton, useUser} from "@clerk/nextjs";
+import Image from "next/image";
+
+
 
 export default function Home() {
   const {user} = useUser()
-    console.log(user)
-    const {data} = api.tasks.getAll.useQuery()
-    console.log(data)
+    const {data: tasks} = api.tasks.getAll.useQuery()
 
   return (
     <>
@@ -16,20 +17,45 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="text-white flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-              {!user && <SignInButton />}
-              {!!user && <SignOutButton />}
-          </div>
-          <div>
-            <h1>Tasks</h1>
-            {data && data.map(task => <div key={task.id}>{task.name} {task.price}</div>)}
-          </div>
+          {!user && <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-[5rem]">
+              <span className="text-[hsl(280,100%,70%)]"> Grind</span> Simulator
+          </h1>}
+        {user &&
+            <header className="flex flex-col items-center ">
+              <h1 className="text-3xl tracking-tight text-white">
+                Привет, <span className="text-[hsl(280,100%,70%)]">{user.fullName}</span>
+              </h1>
+                <h1 className="tracking-tight text-white sm:text-[5rem]">
+                    На балансе <span className="text-[hsl(280,100%,70%)]">0</span> поинтов
+                </h1>
+              <Image className="rounded-full m-auto mt-10" width={200} height={200} src={user?.profileImageUrl} alt="profileImage" />
+            </header>
+        }
+        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-8">
+              {!user && <div>
+                  <button className="mt-10 bg-purple-900 font-semibold hover:bg-purple-800 px-10 py-5 rounded-xl">
+                      <SignInButton>
+                          Войти в чертово приложение
+                      </SignInButton>
+                  </button>
+              </div>}
+            {user && <div className="flex flex-col items-center gap-y-3">
+                <h1 className="text-5xl tracking-tight text-white ">
+                    Основные задачи
+                </h1>
+                {tasks && tasks.map(task => <h1 className="text-3xl tracking-tight text-white " key={task.id}>
+                    {task.name}
+                    <span className="text-[hsl(280,100%,70%)]"> {task.price}</span>
+                </h1>)}
+            </div>}
         </div>
+          {!!user &&
+              <button className="bg-purple-900 font-semibold hover:bg-purple-800 px-10 py-5 rounded-xl">
+                <SignOutButton>
+                    <p>Выйти к чертям (проявить <span className="text-[hsl(280,100%,70%)]"> слабость</span> )</p>
+                </SignOutButton>
+              </button>}
       </main>
     </>
-  );
+  )
 }
