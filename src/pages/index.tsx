@@ -1,13 +1,12 @@
 import Head from "next/head";
-import Link from "next/link";
 import { api } from "~/utils/api";
-import {SignIn, SignInButton, SignOutButton, useUser} from "@clerk/nextjs";
+import {SignInButton, SignOutButton, useUser} from "@clerk/nextjs";
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
   const {user} = useUser()
     console.log(user)
+    const {data} = api.tasks.getAll.useQuery()
+    console.log(data)
 
   return (
     <>
@@ -24,6 +23,10 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
               {!user && <SignInButton />}
               {!!user && <SignOutButton />}
+          </div>
+          <div>
+            <h1>Tasks</h1>
+            {data && data.map(task => <div key={task.id}>{task.name} {task.price}</div>)}
           </div>
         </div>
       </main>
